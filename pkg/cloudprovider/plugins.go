@@ -90,8 +90,12 @@ func InitCloudProvider(name string, configFilePath string) (Interface, error) {
 	var cloud Interface
 	var err error
 
-	if name == "" {
-		glog.Info("No cloud provider specified.")
+	if name == "" || name == "external" {
+		outputCloud := name
+		if outputCloud == "" {
+			outputCloud = "No"
+		}
+		glog.Infof("%s cloud provider specified.", outputCloud)
 		return nil, nil
 	}
 
