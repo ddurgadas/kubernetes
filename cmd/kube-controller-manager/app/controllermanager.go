@@ -303,18 +303,20 @@ func StartControllers(s *options.CMServer, kubeconfig *restclient.Config, rootCl
 		}
 		nodeController.Run()
 		time.Sleep(wait.Jitter(s.ControllerStartInterval.Duration, ControllerStartJitter))
-	}
 
-	serviceController, err := servicecontroller.New(cloud, client("service-controller"), s.ClusterName)
-	if err != nil {
-		glog.Errorf("Failed to start service controller: %v", err)
-	} else {
-		serviceController.Run(int(s.ConcurrentServiceSyncs))
+		serviceController, err := servicecontroller.New(cloud, client("service-controller"), s.ClusterName)
+		if err != nil {
+			glog.Errorf("Failed to start service controller: %v", err)
+		} else {
+			serviceController.Run(int(s.ConcurrentServiceSyncs))
+		}
+		time.Sleep(wait.Jitter(s.ControllerStartInterval.Duration, ControllerStartJitter))
 	}
-	time.Sleep(wait.Jitter(s.ControllerStartInterval.Duration, ControllerStartJitter))
 
 	if s.AllocateNodeCIDRs && s.ConfigureCloudRoutes {
-		if cloud == nil {
+		if s.CloudProvider == "external" {
+			glog.Warning("configure-cloud-routes is set, but cloud provider is external. Will not configure cloud provider routes.")
+		} else if cloud == nil {
 			glog.Warning("configure-cloud-routes is set, but no cloud provider specified. Will not configure cloud provider routes.")
 		} else if routes, ok := cloud.Routes(); !ok {
 			glog.Warning("configure-cloud-routes is set, but cloud provider does not support routes. Will not configure cloud provider routes.")
