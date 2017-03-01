@@ -171,6 +171,7 @@ dns-port
 dns-provider
 dns-provider-config
 dns-zone-name
+do-cloud-init
 dockercfg-path
 docker-email
 docker-endpoint
