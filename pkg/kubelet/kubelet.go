@@ -463,6 +463,7 @@ func NewMainKubelet(kubeCfg *componentconfig.KubeletConfiguration, kubeDeps *Kub
 		daemonEndpoints:   daemonEndpoints,
 		containerManager:  kubeDeps.ContainerManager,
 		nodeIP:            net.ParseIP(kubeCfg.NodeIP),
+		providerID:        kubeCfg.ProviderID,
 		clock:             clock.RealClock{},
 		outOfDiskTransitionFrequency:            kubeCfg.OutOfDiskTransitionFrequency.Duration,
 		enableCustomMetrics:                     kubeCfg.EnableCustomMetrics,
@@ -1040,6 +1041,9 @@ type Kubelet struct {
 
 	// If non-nil, use this IP address for the node
 	nodeIP net.IP
+
+	// If non-nil, this is a unique identifier for the node in an external database, eg. cloudprovider
+	providerID string
 
 	// clock is an interface that provides time related functionality in a way that makes it
 	// easy to test the code.
